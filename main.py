@@ -1,8 +1,8 @@
-import re
-from collections import Counter
-import sys
-import os
 import json
+import os
+import re
+import sys
+from collections import Counter
 
 
 def count_word_frequencies(text):
@@ -13,7 +13,7 @@ def count_word_frequencies(text):
 
 def read_file(file_path):
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             return file.read()
     except FileNotFoundError:
         print(f"Error: File '{file_path}' not found.", file=sys.stderr)
@@ -29,14 +29,18 @@ def write_json_output(frequencies, output_file=None):
     Sort by frequency (descending) and alphabetically for equal frequencies
     """
     # Sort the dictionary by value (descending) and then by key (alphabetically)
-    sorted_frequencies = dict(sorted(
-        frequencies.items(),
-        key=lambda x: (-x[1], x[0])  # Negative frequency for descending order, then word alphabetically
-    ))
-
+    sorted_frequencies = dict(
+        sorted(
+            frequencies.items(),
+            key=lambda x: (
+                -x[1],
+                x[0],
+            ),  # Negative frequency for descending order, then word alphabetically
+        )
+    )
     if output_file:
         try:
-            with open(output_file, 'w', encoding='utf-8') as f:
+            with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(sorted_frequencies, f, indent=2)
         except Exception as e:
             print(f"Error writing to file: {str(e)}", file=sys.stderr)
@@ -47,16 +51,19 @@ def write_json_output(frequencies, output_file=None):
 
 
 def main():
+    print("word-frequency v1.0.0")
     import argparse
-    parser = argparse.ArgumentParser(description='Count word frequencies and output as JSON')
-    parser.add_argument('input_file', help='Path to the input text file')
-    parser.add_argument('-o', '--output', help='Output JSON file path (optional)')
-    args = parser.parse_args()
 
+    parser = argparse.ArgumentParser(
+        description="Count word frequencies and output as JSON"
+    )
+    parser.add_argument("input_file", help="Path to the input text file")
+    parser.add_argument("-o", "--output", help="Output JSON file path (optional)")
+    args = parser.parse_args()
     if not os.path.exists(args.input_file):
+
         print(f"Error: File '{args.input_file}' does not exist.", file=sys.stderr)
         sys.exit(1)
-
     input_text = read_file(args.input_file)
     frequencies = count_word_frequencies(input_text)
     write_json_output(frequencies, args.output)
